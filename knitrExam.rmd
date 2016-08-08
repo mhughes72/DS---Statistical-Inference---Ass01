@@ -1,5 +1,5 @@
 
-# Ass Number 1
+# Statistical Inference Assignment - Part A
 
 
 ## Set up steps
@@ -60,4 +60,44 @@ h<-hist(means, breaks=50, density=20, col="gray", xlab="Accuracy", main="Overall
     yfit<-dnorm(xfit,mean=mean(means),sd=sd(means))
     yfit <- yfit*diff(h$mids[1:2])*length(means)
     lines(xfit, yfit, col="blue", lwd=2)
+```
+
+
+# Statistical Inference Assignment - Part B
+
+First load the required libraries
+```{r}
+library(ggplot2)
+library(datasets)
+data(ToothGrowth)
+```
+
+Here are some basic exploratory data Analyses.
+```{r}
+str(ToothGrowth)
+head(ToothGrowth)
+ToothGrowth$dose <- as.factor(ToothGrowth$dose)
+table(ToothGrowth$supp, ToothGrowth$dose)
+summary(ToothGrowth)
+```
+
+A point chart to start visualizing the outcome of the data
+```{r}
+ggplot(ToothGrowth, aes(x=dose, y=len))+geom_point(color="aquamarine4")+facet_wrap(~supp, nrow=1) +
+     labs(x="Dosage", y="Number of Teeth")+  
+     ggtitle("Exploratory Data Analyses")
+
+```
+
+We perform a t-test on the data to determine whether our null hypothesis can be rejected.
+```{r}
+
+v1 <- t.test(len~supp, paired=F, var.equal=T, data=ToothGrowth)
+v2 <- t.test(len~supp, paired=F, var.equal=F, data=ToothGrowth)
+Vresults <- data.frame("p-value"=c(v1$p.value, v2$p.value),
+                          "Conf-Low"=c(v1$conf[1],v2$conf[1]),
+                          "Conf-High"=c(v1$conf[2],v2$conf[2]),
+                          row.names=c("Equal Var","Unequal Var"))
+Vresults
+
 ```
